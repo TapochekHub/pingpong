@@ -1,6 +1,14 @@
 from pygame import *
 import pygame_menu
 font.init()
+mixer.init()
+
+mixer.music.load("CORE.ogg")
+mixer.music.set_volume(0.1)
+hit = mixer.Sound("hit.wav")
+
+
+
 init()
 font1 = font.SysFont("Arial", 120)
 lose1 = font1.render("Player 1 lose!", True, (242, 230, 234))
@@ -31,6 +39,11 @@ class Player(GameSprite):
             self.rect.y -= self.speed
         if keys_pressed[K_DOWN] and self.rect.y < 600:
             self.rect.y += self.speed
+
+win = display.set_mode((1280, 720))
+display.set_caption("Пинг-понг")
+background = transform.scale(image.load("img/pp_bg.png"), (1920, 1080))
+        
 def main():
     biba = Player(20, 120, 100, 100, 15, "img/player.png")
 
@@ -38,20 +51,19 @@ def main():
 
     ball = GameSprite(30, 30, 600, 600, 2, "img/ball.png")
 
-    win = display.set_mode((1280, 720))
-    display.set_caption("Пинг-понг")
-    background = transform.scale(image.load("img/pp_bg.png"), (1920, 1080))
+    
 
     speed_x = 5
     speed_y = 5
 
-
+    mixer.music.play()
     finish = False
     while True:
         for e in event.get():
             if e.type == QUIT:
                 return
         if finish != True:
+            
             win.blit(background, (0, 0))
             biba.reset()
             biba.player_1()
@@ -67,9 +79,11 @@ def main():
                 speed_y = speed_y * -1
 
             if sprite.collide_rect(biba, ball) or sprite.collide_rect(boba, ball):
+                hit.play()
                 speed_x = speed_x + 1
                 speed_y = speed_y + 1
                 speed_x = speed_x * -1
+
         if ball.rect.x < 0:
             finish = True
             win.blit(lose1, (80, 80))
@@ -87,10 +101,10 @@ def start_menu():
     menu.add.button("Начать", main)
     menu.add.button("Выйти", pygame_menu.events.EXIT)
     menu.mainloop(win)
+
+
+if __name__ == "__main__":
+    start_menu()
     
 
 
-
-start_menu()
-
-    
